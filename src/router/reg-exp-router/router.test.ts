@@ -158,7 +158,7 @@ describe('RegExpRouter', () => {
       expect(res[1][0]).toBe('wildcard')
     })
 
-    it('Should prioritize the only wildcard over the tail wildcard regardless of the order', () => {
+    it('Should prioritize the only wildcard over the tail wildcard regardless of the order and remainder', () => {
       for (const paths of [
         ['/a*', '/a/*'],
         ['/a/*', '/a*'],
@@ -167,8 +167,10 @@ describe('RegExpRouter', () => {
         for (const path of paths) {
           router.add('GET', path, path)
         }
-        const [res] = router.match('GET', '/a')
-        expect(res[0][0]).toBe('/a*')
+        for (const path of ['/a', '/a/foo']) {
+          const [res] = router.match('GET', path)
+          expect(res[0][0]).toBe('/a*')
+        }
       }
     })
   })
